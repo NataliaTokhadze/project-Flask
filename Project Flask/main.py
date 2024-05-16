@@ -39,7 +39,7 @@ def login():
 @app.route('/user')
 def user():
     if 'user' in flask_session:
-        subjects = ['Howl\'s moving castle', 'Hayao miyazaki', 'DB']
+        subjects = ['Howl\'s moving castle', 'My neighbor Totoro', 'The boy and the heron']
         return render_template('user.html', subjects=subjects)
     return redirect(url_for('login'))
 
