@@ -1,0 +1,18 @@
+{%  extends 'base.html' %}
+ {% block title %} Home page {%  endblock %}
+
+{% block content %}
+<br>
+<h3>Add Anime</h3>
+    <form method="post" style="width:50%; margin-left: 10px">
+      <div class="form-group">
+        <input type="text" name="title" class="form-control" placeholder="Anime Title"><br>
+        <input type="text" name="author" class="form-control" placeholder="Anime Author"><br>
+        <input type="text" name="price" class="form-control"  placeholder="Price"><br>
+      </div>
+    <button type="submit" class="btn btn-primary">Add Anime</button>
+    </form>
+
+<p><a href="https://anilist.co/home" target="_blank"></a>The best webpage to find anime to watch</p>
+
+{% endblock %}
