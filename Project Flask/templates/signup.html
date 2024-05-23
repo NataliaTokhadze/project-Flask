@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ super() }}
+    <h2>Sign Up</h2>
+    
+    <form method="POST" style="width:50%; margin-left:20px;">
+        <input type="text" name="username" class="form-control mb-3 mt-3" placeholder="username" required>
+        <input type="password" name="password" class="form-control mb-3 mt-3" placeholder="password" required>
+        <input type="email" name="email" class="form-control mb-3 mt-3" placeholder="E-mail" required>
+        <button type="submit" class="btn btn-success mt-3">Sign Up</button>
+    </form>
+
+{% endblock %}
