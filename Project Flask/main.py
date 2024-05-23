@@ -28,6 +28,14 @@ db_session = Session()
 def home():
     return render_template('index.html')
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        flask_session['user'] = username
+        return redirect(url_for('user'))
+    return render_template('signup.html')
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
