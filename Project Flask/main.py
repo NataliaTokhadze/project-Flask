@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, render_template, request, session as
 from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
