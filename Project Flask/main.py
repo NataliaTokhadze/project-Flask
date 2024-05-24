@@ -24,6 +24,19 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 db_session = Session()
 
+def password_validator(password):
+    if len(password) < 8:
+        return False
+    if not re.search(r'[A-Z]', password):
+        return False
+    if not re.search(r'[a-z]', password):
+        return False
+    if not re.search(r'\d', password):
+        return False
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False
+    return True
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -40,8 +53,12 @@ def signup():
 def login():
     if request.method == 'POST':
         username = request.form['username']
-        flask_session['user'] = username
-        return redirect(url_for('user'))
+        password = request.form['password']
+        if password_validator(password):
+            flask_session['user'] = username
+            return redirect(url_for('user'))
+        else:
+            return 'Password must have at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character. Please try again.'
     return render_template('login.html')
 
 @app.route('/user')
