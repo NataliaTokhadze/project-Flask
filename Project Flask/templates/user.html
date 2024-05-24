@@ -1,18 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% block content %}
     <h2>Hello {{session['user']}}</h2>
 
-    {% for i in subjects %}
-        <p>Favorite Anime: {{ i }}</p>
-        {% if i=="Howl's moving castle" %}
-            <p>Release: 2004</p>
-        {% elif i=='My neighbor Totoro'%}
-            <p>Release: 1988</p>
-        {% else %}
-            <p>Release: Unknown</p>
-        {% endif %}
-    {% endfor %}
-
+    <div class="Anime" >
+        {%if not animes%}
+        <p>no animes added yet</p>
+        {%endif%}
+    {% for i in animes %}
+    <div class="anime-instance" >
+         <p> Anime data : {{i}}</p>
+    </div>
+    {{% endfor %}}
 <a href="{{url_for('home')}}"> Home page </a>
 {% endblock %}
