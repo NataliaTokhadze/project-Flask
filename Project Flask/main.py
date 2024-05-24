@@ -79,19 +79,19 @@ def logout():
 def anime():
     if request.method == 'POST':
         title = request.form['title']
-        author = request.form['author']
-        price = request.form['price']
-        if title and author and price:
+        director = request.form['director']
+        rating = request.form['rating']
+        if title and director and rating:
             try:
-                price = float(price)
-                new_anime = Anime(title=title, author=author, price=price)
+                rating = float(rating)
+                new_anime = Anime(title=title, director=director, rating=rating)
                 db_session.add(new_anime)
                 db_session.commit()
                 return 'Data added successfully'
             except ValueError:
                 return 'Invalid input for price'
     return render_template('anime.html')
-
+    
 if __name__ == "__main__":
     app.run(debug=True)
 
