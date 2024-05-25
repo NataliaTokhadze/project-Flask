@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% block content %}
     <h2>Hello {{session['user']}}</h2>
 
-    <div class="Anime" >
-        {%if not animes%}
-        <p>no animes added yet</p>
-        {%endif%}
-    {% for i in animes %}
-    <div class="anime-instance" >
-         <p> Anime data : {{i}}</p>
+<div class="Anime">
+        {% if not animes %}
+            <p>No animes added yet</p>
+        {% endif %}
+        {% for i in animes %}
+            <div class="anime-instance">
+                <p>Anime data: {{ i }}</p>
+            </div>
+        {% endfor %}
     </div>
-    {{% endfor %}}
 <a href="{{url_for('home')}}"> Home page </a>
 {% endblock %}
