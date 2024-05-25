@@ -4,6 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 import re
 
+from bs4 import BeautifulSoup
+import requests
+import re
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
@@ -92,6 +96,104 @@ def anime():
             except ValueError:
                 return 'Invalid input for rating'
     return render_template('anime.html')
+
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+}
+
+website = requests.get("https://myanimelist.net/anime/genre/39/Detective", headers=headers).text
+soup = BeautifulSoup(website, 'lxml')
+animes = soup.find_all('div', class_= 'js-anime-category-producer seasonal-anime js-seasonal-anime js-anime-type-all js-anime-type-1') + soup.find_all('div', class_= 'js-anime-category-producer seasonal-anime js-seasonal-anime js-anime-type-all js-anime-type-2') + soup.find_all('div', class_='js-anime-category-producer seasonal-anime js-seasonal-anime js-anime-type-all js-anime-type-3') + soup.find_all('div', class_= 'js-anime-category-producer seasonal-anime js-seasonal-anime js-anime-type-all js-anime-type-5')
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        date = request.form['search_date']
+        genres = request.form['search_genre']
+        animess = []
+        if genres != '' and date == '':
+            for anime in animes:
+                name = anime.find('h2', class_= 'h2_anime_title').text
+                name = name.strip()
+
+                info = anime.find('div', class_= 'info').text.split()
+                type_year = info[0].split(',')
+                type = re.sub(",", "", type_year[0])
+
+                year_status = list(info[1])
+                year1 = []
+                x = 0
+                while x < 4:
+                    year1.append(year_status[x])
+                    x+=1
+                year = ''.join(year1)
+                status = []
+                for i in year_status:
+                    if i not in year1:
+                        status.append(i)
+                status = ''.join(status)
+                episodes = info[2] + info[3] + ' ' + info[4] + info[5]
+                genre = anime.find('div', class_= 'genres-inner js-genre-inner').text.split()
+                for i in genre:
+                    if i == genres:
+                        animess.append([name, type, year, status, episodes, genre])
+        if genres == '' and date != '':
+            for anime in animes:
+                name = anime.find('h2', class_= 'h2_anime_title').text
+                name = name.strip()
+
+                info = anime.find('div', class_= 'info').text.split()
+                type_year = info[0].split(',')
+                type = re.sub(",", "", type_year[0])
+
+                year_status = list(info[1])
+                year1 = []
+                x = 0
+                while x < 4:
+                    year1.append(year_status[x])
+                    x+=1
+                year = ''.join(year1)
+                status = []
+                for i in year_status:
+                    if i not in year1:
+                        status.append(i)
+                status = ''.join(status)
+                episodes = info[2] + info[3] + ' ' + info[4] + info[5]
+                genre = anime.find('div', class_= 'genres-inner js-genre-inner').text.split()
+                if date == year:
+                    animess.append([name, type, year, status, episodes, genre])
+        if genres != '' and date != '':
+            for anime in animes:
+                name = anime.find('h2', class_= 'h2_anime_title').text
+                name = name.strip()
+
+                info = anime.find('div', class_= 'info').text.split()
+                type_year = info[0].split(',')
+                type = re.sub(",", "", type_year[0])
+
+                year_status = list(info[1])
+                year1 = []
+                x = 0
+                while x < 4:
+                    year1.append(year_status[x])
+                    x+=1
+                year = ''.join(year1)
+                status = []
+                for i in year_status:
+                    if i not in year1:
+                        status.append(i)
+                status = ''.join(status)
+                episodes = info[2] + info[3] + ' ' + info[4] + info[5]
+                genre = anime.find('div', class_= 'genres-inner js-genre-inner').text.split()
+                for i in genre:
+                    if i == genres and year == date:
+                        animess.append([name, type, year, status, episodes, genre])
+        return render_template('search.html', response=animess)
+    else:
+        return render_template('search.html')
+
     
 if __name__ == "__main__":
     app.run(debug=True)
