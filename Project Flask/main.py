@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, request, session as flask_session
 from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 import re
 
 app = Flask(__name__)
@@ -13,17 +13,17 @@ class Anime(Base):
     __tablename__ = 'anime'
     id = Column(Integer, primary_key=True)
     title = Column(String(30), nullable=False)
-    author = Column(String(40), nullable=False)
-    price = Column(Float, nullable=False)
+    director = Column(String(40), nullable=False)
+    rating = Column(Float, nullable=False)
 
     def __str__(self):
-        return f'Anime title: {self.title}; Author: {self.author}; Price: {self.price}'
+        return f'Anime title: {self.title}; Director: {self.director}; Rating: {self.rating}'
     
-engine = create_engine('sqlite:///anime.db', echo=True)
+engine = create_engine('sqlite:///animes.db', echo=True, connect_args={"check_same_thread": False})
 Base.metadata.create_all(bind=engine)
 
-Session = sessionmaker(bind=engine)
-db_session = Session()
+session_factory = sessionmaker(bind=engine)
+Session = scoped_session(session_factory)
 
 def password_validator(password):
     if len(password) < 8:
@@ -64,8 +64,8 @@ def login():
 
 @app.route('/user')
 def user():
-    animes=Anime.query.filter_by(account_name=db_session['user']).all()
-    return render_template('user.html', animes=animes)
+    user_animes = Session.query(Anime).all()
+    return render_template('user.html', animes=user_animes)
 
 @app.route('/<name>/<age>')
 def userage(name, age):
@@ -86,8 +86,8 @@ def anime():
             try:
                 rating = float(rating)
                 new_anime = Anime(title=title, director=director, rating=rating)
-                db_session.add(new_anime)
-                db_session.commit()
+                Session.add(new_anime)
+                Session.commit()
                 return 'Data added successfully'
             except ValueError:
                 return 'Invalid input for price'
@@ -97,13 +97,13 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 anime1 = Anime(title='Howl\'s moving castle', author='Hayao miyazaki', price=999999.0)
-db_session.add(anime1)
-db_session.commit()
+Session.add(anime1)
+Session.commit()
 
 anime2 = Anime(title='My neighbor Totoro', author='Hayao miyazaki', price=999999.9)
-db_session.add(anime2)
-db_session.commit()
+Session.add(anime2)
+Session.commit()
 
-result = db_session.query(Anime).all()
+result = Session.query(Anime).all()
 for row in result:
     print(row)
