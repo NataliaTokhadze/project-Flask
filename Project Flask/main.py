@@ -90,17 +90,17 @@ def anime():
                 Session.commit()
                 return 'Data added successfully'
             except ValueError:
-                return 'Invalid input for price'
+                return 'Invalid input for rating'
     return render_template('anime.html')
     
 if __name__ == "__main__":
     app.run(debug=True)
 
-anime1 = Anime(title='Howl\'s moving castle', author='Hayao miyazaki', price=999999.0)
+anime1 = Anime(title='Howl\'s moving castle', director='Hayao miyazaki', rating=999999.0)
 Session.add(anime1)
 Session.commit()
 
-anime2 = Anime(title='My neighbor Totoro', author='Hayao miyazaki', price=999999.9)
+anime2 = Anime(title='My neighbor Totoro', director='Hayao miyazaki', rating=999999.9)
 Session.add(anime2)
 Session.commit()
 
